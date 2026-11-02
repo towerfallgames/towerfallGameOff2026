@@ -1,5 +1,4 @@
 using System;
-using System.ComponentModel;
 using Godot;
 
 public partial class PlaneController : Node
@@ -14,7 +13,7 @@ public partial class PlaneController : Node
 
     //Signals
     [Signal]
-    public delegate Planes PlaneChangeSignalEventHandler(Planes plane);
+    public delegate void PlaneChangeSignalEventHandler(Planes plane);
 
     //Enums
     public enum Planes
@@ -32,11 +31,8 @@ public partial class PlaneController : Node
         if (EchoPlane == null){throw new NullReferenceException();}
         if (Player == null){throw new NullReferenceException();}
 
-        EchoPlane.Visible = false;
-        MaterialPlane.Visible = true;
         CurrentPlane = Planes.Material;
-        Player.SetCollisionMaskValue(2, true);
-        Player.SetCollisionMaskValue(3, false);
+        ApplyDecision(CurrentPlane);
     }
 
     public override void _Process(double delta)
@@ -52,22 +48,33 @@ public partial class PlaneController : Node
             GD.Print("Shift pressed.");
             if (CurrentPlane == Planes.Material)
             {
+                ApplyDecision(CurrentPlane);
+            }
+            ApplyDecision(CurrentPlane);
+        }
+    }
+
+    private void ApplyDecision(Planes destination)
+    {
+        switch (destination)
+        {
+            case Planes.Echo:
                 CurrentPlane = Planes.Echo;
                 EchoPlane.Visible = true;
                 MaterialPlane.Visible = false;
                 Player.SetCollisionMaskValue(2, false);
                 Player.SetCollisionMaskValue(3, true);
+                break;
 
-                GD.Print($"Changed Planes to {CurrentPlane}");
-                return;
-            }
-            CurrentPlane = Planes.Material;
-            EchoPlane.Visible = false;
-            MaterialPlane.Visible = true;
-            Player.SetCollisionMaskValue(2, true);
-            Player.SetCollisionMaskValue(3, false);
-
-            GD.Print($"Changed Planes to {CurrentPlane}");
+            case Planes.Material:
+                CurrentPlane = Planes.Material;
+                EchoPlane.Visible = false;
+                MaterialPlane.Visible = true;
+                Player.SetCollisionMaskValue(2, true);
+                Player.SetCollisionMaskValue(3, false);
+                break;
         }
+
+        EmitSignal(SignalName.PlaneChangeSignal, (int)CurrentPlane);
     }
 }
