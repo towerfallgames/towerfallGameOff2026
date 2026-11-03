@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://dxipijwxeyr3s"]
+
+[ext_resource type="Texture2D" uid="uid://cx1wg0xxxto1a" path="res://assets/manipulatable/placeholderDoor.png" id="1_hpvv5"]
+[ext_resource type="Script" uid="uid://dq0v6yale2hw2" path="res://scripts/worldspaceControllers/Door.cs" id="1_uvdjg"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_uvdjg"]
+size = Vector2(32, 64)
+
+[node name="Door" type="StaticBody2D" unique_id=438462700 node_paths=PackedStringArray("CollisionShape", "DoorSprite")]
+script = ExtResource("1_uvdjg")
+CollisionShape = NodePath("CollisionShape2D")
+DoorSprite = NodePath("Sprite2D")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1198317372]
+texture = ExtResource("1_hpvv5")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=2074367640]
+shape = SubResource("RectangleShape2D_uvdjg")

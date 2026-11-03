@@ -78,6 +78,7 @@ public partial class PlaneController : Node
                 MaterialPlane.Visible = false;
                 Player.SetCollisionMaskValue(2, false);
                 Player.SetCollisionMaskValue(3, true);
+                EmitSignal(SignalName.PlaneChangeSignal, (int)destination);
                 break;
 
             case Planes.Material:
@@ -86,6 +87,7 @@ public partial class PlaneController : Node
                 MaterialPlane.Visible = true;
                 Player.SetCollisionMaskValue(2, true);
                 Player.SetCollisionMaskValue(3, false);
+                EmitSignal(SignalName.PlaneChangeSignal, (int)destination);
                 break;
         }
 
@@ -97,7 +99,7 @@ public partial class PlaneController : Node
     {
         var query = new PhysicsShapeQueryParameters2D();
 
-        int bitmask = destination switch
+        uint bitmask = destination switch
         {
             Planes.Material => 2,
             Planes.Echo => 4,
@@ -106,7 +108,7 @@ public partial class PlaneController : Node
 
         query.Shape = PlayerCollisionShape.Shape;
         query.Transform = PlayerCollisionShape.GlobalTransform;
-        query.CollisionMask = (uint)bitmask;
+        query.CollisionMask = bitmask;
         query.CollideWithAreas = false;
         query.CollideWithBodies = true;
 

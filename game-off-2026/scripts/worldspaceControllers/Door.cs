@@ -16,6 +16,12 @@ public partial class Door : StaticBody2D
 	public override void _Ready()
 	{
 		WorldState.GateUnlockedSignal += (bool gateUnlocked) => UnlockGate(gateUnlocked);
+
+		if (WorldState.GateUnlocked)
+		{
+			DoorSprite.Texture = GD.Load<Texture2D>(_openDoorSpritePath);
+			CollisionShape.QueueFree();
+		}
 	}
 
 	private void UnlockGate(bool pressureplateTriggered)

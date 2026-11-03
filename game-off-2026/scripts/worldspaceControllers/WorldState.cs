@@ -18,8 +18,11 @@ public partial class WorldState : Node
 
     public void SendGateUnlockedSignal()
     {
-        GD.Print("Pressure Plate activation: RECEIVED");
-        GateUnlocked = true;
-        EmitSignal(SignalName.GateUnlockedSignal, GateUnlocked);
+        if (!GateUnlocked)
+        {
+            GD.Print("Pressure Plate activation: RECEIVED");
+            GateUnlocked = true;
+            EmitSignal(SignalName.GateUnlockedSignal, GateUnlocked);
+        } 
     }
 }
