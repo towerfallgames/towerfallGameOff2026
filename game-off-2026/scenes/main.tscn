@@ -183,11 +183,12 @@ size = Vector2(32, 32)
 
 [node name="Main" type="Node2D" unique_id=1815398495]
 
-[node name="PlaneController" type="Node" parent="." unique_id=932789770 node_paths=PackedStringArray("MaterialPlane", "EchoPlane", "Player")]
+[node name="PlaneController" type="Node" parent="." unique_id=932789770 node_paths=PackedStringArray("MaterialPlane", "EchoPlane", "Player", "PlayerCollisionShape")]
 script = ExtResource("1_tipki")
 MaterialPlane = NodePath("../WorldSpace/Material")
 EchoPlane = NodePath("../WorldSpace/Echo")
 Player = NodePath("../Player")
+PlayerCollisionShape = NodePath("../Player/CollisionShape2D")
 
 [node name="WorldSpace" type="Node2D" parent="." unique_id=721609401]
 

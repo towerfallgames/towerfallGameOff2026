@@ -1,4 +1,6 @@
 using System;
+using System.Diagnostics;
+using System.Xml.XPath;
 using Godot;
 
 public partial class PlaneController : Node
@@ -10,6 +12,8 @@ public partial class PlaneController : Node
     public Node2D EchoPlane;
     [Export]
     public CharacterBody2D Player;
+    [Export]
+    public CollisionShape2D PlayerCollisionShape;
 
     //Signals
     [Signal]
@@ -35,22 +39,34 @@ public partial class PlaneController : Node
         ApplyDecision(CurrentPlane);
     }
 
-    public override void _Process(double delta)
+    public override void _PhysicsProcess(double delta)
     {
+
         ShiftPlanes();
     }
 
     private void ShiftPlanes()
     {
+        Planes destination;
+        
         //Listen for input and then swap the plane
         if (Input.IsActionJustPressed("shift_plane"))
         {
-            GD.Print("Shift pressed.");
             if (CurrentPlane == Planes.Material)
             {
-                ApplyDecision(CurrentPlane);
+                destination = Planes.Echo;
             }
-            ApplyDecision(CurrentPlane);
+            else
+            {
+                destination = Planes.Material;
+            }
+
+            bool canShift = CanShiftTo(destination);
+
+            if (canShift)
+            {
+            ApplyDecision(destination);
+            }
         }
     }
 
@@ -76,5 +92,35 @@ public partial class PlaneController : Node
         }
 
         EmitSignal(SignalName.PlaneChangeSignal, (int)CurrentPlane);
+    }
+
+    private bool CanShiftTo(Planes destination)
+    {
+        var query = new PhysicsShapeQueryParameters2D();
+
+        int bitmask = destination switch
+        {
+            Planes.Material => 2,
+            Planes.Echo => 4,
+            _ => throw new ArgumentOutOfRangeException(nameof(destination))
+        };
+
+        query.Shape = PlayerCollisionShape.Shape;
+        query.Transform = PlayerCollisionShape.GlobalTransform;
+        query.CollisionMask = (uint)bitmask;
+        query.CollideWithAreas = false;
+        query.CollideWithBodies = true;
+
+        var spaceState = Player.GetWorld2D().DirectSpaceState;
+        
+        var results = spaceState.IntersectShape(query, 1);
+
+        if (results.Count == 0)
+        {
+            return true;
+        }
+        
+        GD.Print("Cannot shift.");
+        return false;
     }
 }
