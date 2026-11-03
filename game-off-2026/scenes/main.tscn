@@ -2,12 +2,15 @@
 
 [ext_resource type="Texture2D" uid="uid://cw1h7dgwepuna" path="res://assets/tilesets/placeholders/PlaceholderTiles.png" id="1_sugp2"]
 [ext_resource type="Script" uid="uid://l0arn8l3f7c3" path="res://scripts/worldspaceControllers/PlaneController.cs" id="1_tipki"]
+[ext_resource type="Script" uid="uid://xfdv4bsb662h" path="res://scripts/worldspaceControllers/WorldState.cs" id="1_ya4ey"]
 [ext_resource type="Script" uid="uid://ptm6end5q0ju" path="res://scripts/player/Player.cs" id="2_jyhfs"]
 [ext_resource type="Texture2D" uid="uid://ceqo8oe2iypqb" path="res://assets/static/placeholders/placeholderWall.png" id="2_tbgi4"]
 [ext_resource type="Texture2D" uid="uid://g20dwlr0pjux" path="res://assets/player/placeholders/placeholderPlayer.png" id="3_tbgi4"]
 [ext_resource type="Texture2D" uid="uid://bfx1x3svy2jge" path="res://assets/manipulatable/placeholderGate.png" id="3_tefeu"]
 [ext_resource type="Texture2D" uid="uid://cx1wg0xxxto1a" path="res://assets/manipulatable/placeholderDoor.png" id="4_o6xl0"]
 [ext_resource type="Texture2D" uid="uid://c46gs0lhumq7t" path="res://assets/manipulatable/placeholderPressurePlate.png" id="5_o6xl0"]
+[ext_resource type="Script" uid="uid://dq0v6yale2hw2" path="res://scripts/worldspaceControllers/Door.cs" id="6_eb6dy"]
+[ext_resource type="Script" uid="uid://b1lsvv7x1qahf" path="res://scripts/worldspaceControllers/Pressureplate.cs" id="8_trceg"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_rp2f6"]
 size = Vector2(32, 128)
@@ -183,6 +186,10 @@ size = Vector2(32, 32)
 
 [node name="Main" type="Node2D" unique_id=1815398495]
 
+[node name="WorldState" type="Node" parent="." unique_id=1865697365 node_paths=PackedStringArray("PressurePlate")]
+script = ExtResource("1_ya4ey")
+PressurePlate = NodePath("../WorldSpace/Echo/ManipulatableObjects/Pressureplate2")
+
 [node name="PlaneController" type="Node" parent="." unique_id=932789770 node_paths=PackedStringArray("MaterialPlane", "EchoPlane", "Player", "PlayerCollisionShape")]
 script = ExtResource("1_tipki")
 MaterialPlane = NodePath("../WorldSpace/Material")
@@ -271,14 +278,18 @@ texture = ExtResource("3_tefeu")
 position = Vector2(0, -0.5)
 shape = SubResource("RectangleShape2D_mofk4")
 
-[node name="Door" type="StaticBody2D" parent="WorldSpace/Material/ManipulatableObjects" unique_id=211224614]
+[node name="Door" type="StaticBody2D" parent="WorldSpace/Material/ManipulatableObjects" unique_id=211224614 node_paths=PackedStringArray("WorldState", "CollisionShape", "DoorSprite")]
 top_level = true
 visibility_layer = 2
 y_sort_enabled = true
-position = Vector2(648, -5)
+position = Vector2(648, 93)
 rotation = -1.5707964
 collision_layer = 2
 collision_mask = 0
+script = ExtResource("6_eb6dy")
+WorldState = NodePath("../../../../WorldState")
+CollisionShape = NodePath("CollisionShape2D")
+DoorSprite = NodePath("Sprite2D")
 
 [node name="Sprite2D" type="Sprite2D" parent="WorldSpace/Material/ManipulatableObjects/Door" unique_id=709596649]
 texture = ExtResource("4_o6xl0")
@@ -294,11 +305,12 @@ tile_set = SubResource("TileSet_rwoom")
 
 [node name="ManipulatableObjects" type="Node2D" parent="WorldSpace/Echo" unique_id=1700665831]
 
-[node name="Pressureplate2" type="Area2D" parent="WorldSpace/Echo/ManipulatableObjects" unique_id=629917093]
-top_level = true
+[node name="Pressureplate2" type="Area2D" parent="WorldSpace/Echo/ManipulatableObjects" unique_id=629917093 node_paths=PackedStringArray("PlaneController")]
 position = Vector2(562, 515)
 collision_layer = 4
-collision_mask = 0
+collision_mask = 8
+script = ExtResource("8_trceg")
+PlaneController = NodePath("../../../../PlaneController")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="WorldSpace/Echo/ManipulatableObjects/Pressureplate2" unique_id=1712591270]
 position = Vector2(1, 0)
@@ -320,3 +332,5 @@ texture = ExtResource("3_tbgi4")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Player" unique_id=667089054]
 shape = SubResource("RectangleShape2D_rwoom")
+
+[connection signal="body_entered" from="WorldSpace/Echo/ManipulatableObjects/Pressureplate2" to="WorldSpace/Echo/ManipulatableObjects/Pressureplate2" method="OnBodyEntered"]

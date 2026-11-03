@@ -89,6 +89,7 @@ public partial class PlaneController : Node
                 break;
         }
 
+        GD.Print(Player.CollisionMask);
         EmitSignal(SignalName.PlaneChangeSignal, (int)CurrentPlane);
     }
 
