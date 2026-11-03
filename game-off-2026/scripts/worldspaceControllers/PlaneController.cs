@@ -1,6 +1,4 @@
 using System;
-using System.Diagnostics;
-using System.Xml.XPath;
 using Godot;
 
 public partial class PlaneController : Node
@@ -34,6 +32,7 @@ public partial class PlaneController : Node
         if (MaterialPlane == null){throw new NullReferenceException();}
         if (EchoPlane == null){throw new NullReferenceException();}
         if (Player == null){throw new NullReferenceException();}
+        if (PlayerCollisionShape == null){throw new NullReferenceException();};
 
         CurrentPlane = Planes.Material;
         ApplyDecision(CurrentPlane);
@@ -41,7 +40,6 @@ public partial class PlaneController : Node
 
     public override void _PhysicsProcess(double delta)
     {
-
         ShiftPlanes();
     }
 
